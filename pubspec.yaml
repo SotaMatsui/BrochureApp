@@ -19,10 +19,12 @@ version: 1.0.0+1
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=2.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  flutter_riverpod: ^1.0.0-dev.7
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -45,9 +47,47 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - data/
+    - assets/images/
+    - assets/images/logo_wIcon_dark.png
+    - assets/images/logo_wIcon_light.png
+    - assets/images/logo_woIcon_dark.png
+    - assets/images/logo_woIcon_light.png
+    - assets/images/maps/1.png
+    - assets/images/maps/2.png
+    - assets/images/maps/3.png
+    - assets/images/maps/4.png
+    - assets/images/maps/5.png
+    - assets/images/maps/6.png
+    - assets/images/maps/7.png
+    - assets/images/maps/8.png
+    - assets/images/maps/9.png
+    - assets/images/maps/10.png
+    - assets/images/maps/11.png
+    - assets/images/maps/12.png
+    - assets/images/maps/101.png
+    - assets/images/maps/102.png
+    - assets/images/maps/103.png
+    - assets/images/maps/104.png
+    - assets/images/maps/105.png
+    - assets/images/maps/106.png
+    - assets/images/maps/107.png
+    - assets/images/maps/108.png
+    - assets/images/maps/109.png
+    - assets/images/maps/110.png
+    - assets/images/maps/111.png
+    - assets/images/maps/112.png
+    - assets/images/maps/113.png
+    - assets/images/maps/114.png
+    - assets/images/maps/115.png
+    - assets/images/maps/116.png
+    - assets/images/maps/117.png
+    - assets/images/maps/1001.png
+    - assets/images/maps/1002.png
+    - assets/splash/fg.png
+    - assets/splash/bg.png
+    - assets/splash/splash.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
