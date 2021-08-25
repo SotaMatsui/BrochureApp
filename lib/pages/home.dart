@@ -1,10 +1,97 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fes_brochure/components/moreInfo.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class homePage extends ConsumerWidget {
+import 'package:fes_brochure/components/detail.dart';
+
+class TabInfo {
+  String label;
+  Widget widget;
+  TabInfo(this.label, this.widget);
+}
+
+class homePage extends StatefulWidget {
+  final String jsondata;
+  homePage({required this.jsondata});
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _homePageState createState() => _homePageState();
+}
+
+class _homePageState extends State<homePage> {
+  Map _data1 = {};
+  Future<void> loadJsonAsset() async {
+    setState(() {
+      _data1 = json.decode(widget.jsondata)['home'];
+    });
+  }
+
+  @override
+  void initState() {
+    loadJsonAsset();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> buildItems() {
+      List<Widget> items = [];
+      print(_data1['aisatu']);
+
+      _data1['aisatu'].forEach((Map obj) {
+        items.add(Text(obj['body']));
+      });
+
+      return items;
+    }
+
+    List<String> list = ['one', 'two', 'three', 'four'];
+    List<Widget> widgets(String type) {
+      var array = <Widget>[];
+      switch (type) {
+        case 'aisatu':
+          for (var i = 0; i < _data1['aisatu'].length; i++) {
+            array.add(Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                    '${_data1['aisatu'][i]['role']}\n${_data1['aisatu'][i]['name']}',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text('${_data1['aisatu'][i]['body']}\n'),
+              ],
+            ));
+          }
+          break;
+        case 'midokoro':
+          for (var i = 0; i < _data1['midokoro'].length; i++) {
+            array.add(Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('${_data1['midokoro'][i]['title']}',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text('${_data1['midokoro'][i]['body']}\n'),
+              ],
+            ));
+          }
+          break;
+        case 'onegai':
+          for (var i = 0; i < _data1['onegai'].length; i++) {
+            array.add(Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('• ${_data1['onegai'][i]}\n'),
+              ],
+            ));
+          }
+          break;
+      }
+      return array;
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -66,106 +153,51 @@ class homePage extends ConsumerWidget {
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(16)),
                       color: Colors.white,
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.all(10),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Material(
-                                      color: Colors.grey[300],
-                                      child: SizedBox(
-                                        width: 24,
-                                        height: 4,
-                                      ),
-                                    ),
-                                  )
-                                ]),
-                          ),
-                          _menuItemB(
-                            "ごあいさつ",
-                            Icon(Icons.pets_outlined),
-                            RichText(
-                              textScaleFactor:
-                                  MediaQuery.of(context).textScaleFactor,
-                              text: TextSpan(
-                                style: DefaultTextStyle.of(context).style,
-                                children: const <TextSpan>[
-                                  TextSpan(
-                                      text: '本所高等学校長\n小山 克之\n',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16)),
-                                  TextSpan(
-                                      text:
-                                          '昨年度は新型コロナウイルス感染症拡大防止のため文化祭は中止となりました。本年もまだコロナ禍ですが、例年とは形を変えることによって本所祭を実施できることはみなさんの努力の結果だと思っています。生徒と保護者など多くの人々のご理解とご協力のおかげであり、大変感謝しています。 \nさて、本年度の本所祭のテーマ『　煌　～ 咲かせよう　僕らの青春 ～　』です。 \n各クラスの企画などを見ますと自分たちの特徴を出そうと工夫の跡が見られます。文化祭は発表当日だけではなく、作成していく段階が非常に大切だと思っています。そのなかで生徒一人一人が煌き、花咲かせることができると思います。 \nどうか生徒のみなさんには「文化的」な面と「お祭り的」な明るさの両面を兼ね備えたバランスのとれた楽しい文化祭を創造していただきたい。生徒全員が一致協力して文化祭を盛り上げ、仲間とともに明日の本所高校につながる充実した展示や発表を大いに期待したいと思います。\n'),
-                                  TextSpan(
-                                      text: '\n文化祭実行委員長\n山崎 煌\n',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16)),
-                                  TextSpan(
-                                      text:
-                                          '今回のテーマは「煌 -咲かせよう僕らの青春-」です。「煌」という漢字には、かがやく きらめくという意味がこめられています。近年はコロナ禍というご時世もあり、僕達は冷たい水の中にいるようで皆さんが想像していた夢のDramaのような高校生活には、なっていないかもしれません。ですが、今回の文化祭では降り注ぐ星の光が僕たちを照らしてくれます。そのMAGICを信じて、このテーマにしました。 この日のために、生徒全員で一致団結して頑張ってきたので、今日だけは、誰よりも高く跳び、目の前のガラスを割る勢いで無限大のパワーを見せましょう！！\n'),
-                                  TextSpan(
-                                      text: '\n生徒会長\n永長 和樹\n',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16)),
-                                  TextSpan(
-                                      text:
-                                          'こんにちは、生徒会長の永長和樹です。\n生徒の皆さん、長い間文化祭の準備お疲れ様でした\nコロナ禍でありながら今回文化祭を開催できることをとても嬉しく思います。\n今回の文化祭のテーマは「煌」であり\n\n「サブテーマは咲かせよう僕らの青春」\n\n一人一人の個性が輝くようにという意味でたてられました\n\n一二年生は映画や、展示など、を準備しています\nまた、各クラスだけでなく各部活もシンクロやライブや物品販売など本所高校ならではの\n出し物が多数あります、\n\nまた、生徒会ではアンブレラスカイを、中庭に設営しました。\nフォトスポットとしてご利用ください\n\n全てのクラスまた、団体はコロナ禍の中全力で用意してきました、是非立ち寄ってみてください\n'),
-                                ],
-                              ),
-                            ),
-                            context,
-                          ),
-                          _menuItem(
-                              "各装飾の見どころ",
-                              Icon(Icons.thumb_up_outlined),
-                              RichText(
-                                textScaleFactor:
-                                    MediaQuery.of(context).textScaleFactor,
-                                text: TextSpan(
-                                  style: DefaultTextStyle.of(context).style,
-                                  children: const <TextSpan>[
-                                    TextSpan(
-                                        text: '校内装飾\n',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16)),
-                                    TextSpan(
-                                        text:
-                                            '毎年恒例の写真スポット「HONJO」を作りました。\nぜひ、スカイツリーをバックに写真を撮ってください。\n他にも、原宿のアノ協会のアレを再現したものや、「運命の赤い糸」の写真スポットを作りました。\n'),
-                                    TextSpan(
-                                        text: '\n校内装飾\n',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16)),
-                                    TextSpan(
-                                        text:
-                                            '中央階段はテーマの「空」に合った装飾にしました。\n他の階段はアクアリウムをイメージしたものと、ピンクを基調にしたかわいい雰囲気の装飾にしました。また、ステンドグラス風の窓の装飾にもご注目ください。\n'),
-                                    TextSpan(
-                                        text: '\nアーチ\n',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16)),
-                                    TextSpan(
-                                        text:
-                                            'アーチは今年のテーマ「空」をモチーフにデザインしました。今年はアーチの「HONJO」を立体にしたり、お帰りになる方を見送るメッセージを付け加えるなどの工夫をしました、\nアーチをくぐる際には、ぜひ上にもご注目ください。\n'),
-                                  ],
+                      child: _data1.length != 0
+                          ? Column(
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.all(10),
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: Material(
+                                            color: Colors.grey[300],
+                                            child: SizedBox(
+                                              width: 24,
+                                              height: 4,
+                                            ),
+                                          ),
+                                        )
+                                      ]),
                                 ),
-                              )),
-                          _menuItem(
-                              "おねがい",
-                              Icon(Icons.feedback_outlined),
-                              Text(
-                                  "• 校内は土足厳禁です。上履きまたはスリッパに履き替えてください。\n• 学校敷地内はすべて禁煙です。喫煙はご遠慮ください。\n• 飲食は指定教室に限らせていただきます。廊下・校庭・体育館での飲食はご遠慮ください。\n• 文化祭開催日は9月8日（金）9日（土）ですが、一般公開は9日のみとなっております。ご注意ください。（午前９時～午後３時、入場は午後２時まで）")),
-                        ],
-                      ),
+                                _menuItemB(
+                                  "ごあいさつ",
+                                  Icon(Icons.pets_outlined),
+                                  Column(children: widgets('aisatu')),
+                                  context,
+                                ),
+                                _menuItem(
+                                  "各装飾の見どころ",
+                                  Icon(Icons.thumb_up_outlined),
+                                  Column(
+                                    children: widgets('midokoro'),
+                                  ),
+                                ),
+                                _menuItem(
+                                  "おねがい",
+                                  Icon(Icons.feedback_outlined),
+                                  Column(
+                                    children: widgets('onegai'),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Text('loading'),
                     ),
                   ),
                 );

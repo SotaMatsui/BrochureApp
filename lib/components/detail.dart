@@ -19,17 +19,8 @@ class DetailPageA extends StatelessWidget {
   Color subColor;
   String shortDesc;
   String longDesc;
-  DetailPageA(
-      String this.id,
-      String this.title,
-      String this.type,
-      String this.organizer,
-      String this.place,
-      String this.icon,
-      Color this.themeColor,
-      Color this.subColor,
-      String this.shortDesc,
-      String this.longDesc);
+  DetailPageA(this.id, this.title, this.type, this.organizer, this.place,
+      this.icon, this.themeColor, this.subColor, this.shortDesc, this.longDesc);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +28,7 @@ class DetailPageA extends StatelessWidget {
         body: Stack(children: <Widget>[
           Material(
             color: subColor,
-            child: Image.asset(
+            child: Image.network(
               icon,
               fit: BoxFit.fitWidth,
             ),
@@ -205,17 +196,17 @@ class DetailPageB extends StatelessWidget {
   String longDesc;
   List timeList;
   DetailPageB(
-      String this.id,
-      String this.title,
-      String this.type,
-      String this.organizer,
-      String this.place,
-      String this.icon,
-      Color this.themeColor,
-      Color this.subColor,
-      String this.shortDesc,
-      String this.longDesc,
-      List this.timeList);
+      this.id,
+      this.title,
+      this.type,
+      this.organizer,
+      this.place,
+      this.icon,
+      this.themeColor,
+      this.subColor,
+      this.shortDesc,
+      this.longDesc,
+      this.timeList);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -223,7 +214,7 @@ class DetailPageB extends StatelessWidget {
         body: Stack(children: <Widget>[
           Material(
             color: subColor,
-            child: Image.asset(
+            child: Image.network(
               icon,
               fit: BoxFit.fitWidth,
             ),

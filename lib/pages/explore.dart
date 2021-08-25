@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 
 import 'package:fes_brochure/components/detail.dart';
@@ -11,12 +9,14 @@ class TabInfo {
   TabInfo(this.label, this.widget);
 }
 
-class explorePage extends StatefulWidget {
+class ExplorePage extends StatefulWidget {
+  final String jsondata;
+  ExplorePage({required this.jsondata}); //コンストラクタ
   @override
-  _explorePageState createState() => _explorePageState();
+  _ExplorePageState createState() => _ExplorePageState();
 }
 
-class _explorePageState extends State<explorePage>
+class _ExplorePageState extends State<ExplorePage>
     with SingleTickerProviderStateMixin {
   List _data1 = [];
   List _data1Final = [];
@@ -31,10 +31,9 @@ class _explorePageState extends State<explorePage>
     _data2N = {};
     var unsorted = {};
     _data2TL = {};
-    String loadData = await rootBundle.loadString('data/data.json');
     setState(() {
-      _data1 = json.decode(loadData)['permanent'];
-      _data2 = json.decode(loadData)['scheduled'];
+      _data1 = json.decode(widget.jsondata)['explore']['permanent'];
+      _data2 = json.decode(widget.jsondata)['explore']['scheduled'];
       _data1Final = _data1;
       if (_data1.length != 0) {
         _data1.forEach((element) {
@@ -95,7 +94,6 @@ class _explorePageState extends State<explorePage>
           _data2N.addEntries({element['ID']: element}.entries);
           // 元配列のtimeをループ
           for (int i = 0; i < element['time'].length; i++) {
-            var list = [];
             var strStart = element['time'][i]['start'].toString();
             var strEnd = element['time'][i]['end'].toString();
             var strTime = strStart.substring(0, 2) +
@@ -363,14 +361,13 @@ class _explorePageState extends State<explorePage>
 }
 
 class SchePage extends StatelessWidget {
-  @override
   Map _data;
   Map _dataTL;
-  SchePage(@required Map this._data, @required Map this._dataTL);
+  SchePage(this._data, this._dataTL);
 
   Widget build(BuildContext context) {
     return Container(
-      child: (_dataTL == null || _dataTL.length == 0)
+      child: (_dataTL.length == 0)
           ? Text("Loading....")
           : ListView.builder(
               itemBuilder: (BuildContext context, int index) {
@@ -421,10 +418,9 @@ class SchePage extends StatelessWidget {
 }
 
 class ScheItem extends StatelessWidget {
-  @override
   Map _data;
   List _dataTL;
-  ScheItem(@required Map this._data, @required List this._dataTL);
+  ScheItem(this._data, this._dataTL);
 
   Widget build(BuildContext context) {
     return Column(
@@ -437,7 +433,7 @@ class ScheItem extends StatelessWidget {
               _data[_dataTL[i]['ID']]['organizer'],
               _data[_dataTL[i]['ID']]['place'],
               _data[_dataTL[i]['ID']]['time'],
-              'assets/images/173034.png',
+              'https://fesbrochuredata.web.app/img/titleImg/${_dataTL[i]['ID']}.png',
               Color.fromRGBO(
                   int.parse(
                       _data[_dataTL[i]['ID']]['primaryColor'].split(',')[0]),
@@ -519,8 +515,8 @@ class ScheItem extends StatelessWidget {
                           height: 156,
                           width: 156,
                           child: Material(
-                            color: subColor,
-                            child: Image.asset(
+                            color: Colors.grey[200],
+                            child: Image.network(
                               icon,
                               fit: BoxFit.cover,
                             ),
@@ -575,13 +571,12 @@ class ScheItem extends StatelessWidget {
 }
 
 class PermPage extends StatelessWidget {
-  @override
   List _data;
-  PermPage(@required List this._data);
+  PermPage(this._data);
 
   Widget build(BuildContext context) {
     return Container(
-      child: (_data == null || _data.length == 0)
+      child: (_data.length == 0)
           ? Text("Loading....")
           : GridView.builder(
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -598,7 +593,7 @@ class PermPage extends StatelessWidget {
                     _data[index]['genre'],
                     _data[index]['organizer'],
                     _data[index]['place'],
-                    'assets/images/173034.png',
+                    'https://fesbrochuredata.web.app/img/titleImg/${_data[index]['ID']}.png',
                     Color.fromRGBO(
                         int.parse(_data[index]['primaryColor'].split(',')[0]),
                         int.parse(_data[index]['primaryColor'].split(',')[1]),
@@ -673,8 +668,8 @@ class PermPage extends StatelessWidget {
                       child: AspectRatio(
                         aspectRatio: 1 / 1,
                         child: Material(
-                          color: subColor,
-                          child: Image.asset(
+                          color: Colors.grey[200],
+                          child: Image.network(
                             icon,
                             fit: BoxFit.cover,
                           ),

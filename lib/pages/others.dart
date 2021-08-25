@@ -1,11 +1,104 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:fes_brochure/components/moreInfo.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class othersPage extends ConsumerWidget {
+import 'package:fes_brochure/components/detail.dart';
+
+final imageList = [
+  'assets/images/arts/1.png',
+  'assets/images/arts/2.png',
+  'assets/images/arts/3.png',
+  'assets/images/arts/4.png',
+];
+
+class TabInfo {
+  String label;
+  Widget widget;
+  TabInfo(this.label, this.widget);
+}
+
+class othersPage extends StatefulWidget {
+  final String jsondata;
+  othersPage({required this.jsondata});
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _othersPageState createState() => _othersPageState();
+}
+
+class _othersPageState extends State<othersPage> {
+  Map _data1 = {};
+  Future<void> loadJsonAsset() async {
+    setState(() {
+      _data1 = json.decode(widget.jsondata)['others'];
+    });
+  }
+
+  @override
+  void initState() {
+    loadJsonAsset();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> buildItems() {
+      List<Widget> items = [];
+      print(_data1['aisatu']);
+
+      _data1['aisatu'].forEach((Map obj) {
+        items.add(Text(obj['body']));
+      });
+
+      return items;
+    }
+
+    List<String> list = ['one', 'two', 'three', 'four'];
+    List<Widget> widgets(String type) {
+      var array = <Widget>[];
+      switch (type) {
+        //!TODO Fix this
+        case 'staffs':
+          for (var i = 0; i < _data1['staffs'].length; i++) {
+            var ar = <Widget>[];
+            for (var j = 0; j < _data1['staffs'][i]['list'].length; j++) {
+              ar.add(Text('${_data1['staffs'][i]['list'][j]} '));
+            }
+            array.add(Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('${_data1['staffs'][i]['role']}',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Row(children: ar),
+                Text(''),
+              ],
+            ));
+          }
+          break;
+        case 'gakko':
+          array.add(Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('${_data1['gakko']['title']}',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text('${_data1['gakko']['body']}\n'),
+            ],
+          ));
+          break;
+        case 'henshuu':
+          array.add(Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('${_data1['henshuu']}\n'),
+            ],
+          ));
+          break;
+      }
+      return array;
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: ListView(
@@ -27,67 +120,54 @@ class othersPage extends ConsumerWidget {
           _menuItemB(
               "スタッフ一覧",
               Icon(Icons.face_outlined),
-              RichText(
-                textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                text: TextSpan(
-                  style: DefaultTextStyle.of(context).style,
-                  children: const <TextSpan>[
-                    TextSpan(text: '文化祭実行委員長\n'),
-                    TextSpan(
-                        text: '山崎 煌\n',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
-                    TextSpan(text: '\n生徒会長\n'),
-                    TextSpan(
-                        text: '永長 和樹\n',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
-                  ],
-                ),
+              Column(
+                children: widgets('staffs'),
               ),
               context),
           _menuItem(
-              "編集後記",
-              Icon(Icons.article_outlined),
-              Text(
-                  "本所祭は楽しんでいただけましたか？\nこのパンフレットは美術部・漫画研究部に協力していただき、素敵なものが作れました。また、表紙は３F工藤珠莉さん、ポスターは１A飯塚若菜さんの作品です。ご協力ありがとうございました。")),
-          _menuItemB("応募作品", Icon(Icons.mms_outlined), Text(""), context),
+            "編集後記",
+            Icon(Icons.article_outlined),
+            Column(
+              children: widgets('henshuu'),
+            ),
+          ),
+          _menuItemB(
+              "応募作品",
+              Icon(Icons.mms_outlined),
+              Wrap(
+                children: [
+                  Image.asset('assets/images/arts/1.png'),
+                  Image.asset('assets/images/arts/2.png'),
+                  Image.asset('assets/images/arts/3.png'),
+                  Image.asset('assets/images/arts/4.png')
+                ],
+              ),
+              context),
           _menuItem(
-              "学校情報",
-              Icon(Icons.school_outlined),
-              RichText(
-                textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                text: TextSpan(
-                  style: DefaultTextStyle.of(context).style,
-                  children: const <TextSpan>[
-                    TextSpan(
-                        text: '東京都立本所高等学校\n',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
-                    TextSpan(
-                        text:
-                            '〒131-0033 東京都墨田区向島3-37-25\n電話 : 03-3622-0344\nファクシミリ : 03-3622-0146'),
-                  ],
-                ),
-              )),
+            "学校情報",
+            Icon(Icons.school_outlined),
+            Column(
+              children: widgets('gakko'),
+            ),
+          ),
           _menuItem(
-              "このアプリについて",
-              Icon(Icons.info_outline),
-              RichText(
-                textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                text: TextSpan(
-                  style: DefaultTextStyle.of(context).style,
-                  children: const <TextSpan>[
-                    TextSpan(
-                        text:
-                            'HONJO Fes Brochure App 2021\nDevelopment Version\n',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
-                    TextSpan(
-                        text: 'Created by ComputerClub\nPowered by Flutter'),
-                  ],
-                ),
-              )),
+            "このアプリについて",
+            Icon(Icons.info_outline),
+            RichText(
+              textScaleFactor: MediaQuery.of(context).textScaleFactor,
+              text: TextSpan(
+                style: DefaultTextStyle.of(context).style,
+                children: const <TextSpan>[
+                  TextSpan(
+                      text:
+                          'HONJO Fes Brochure App 2021\nDevelopment Version\n',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  TextSpan(text: 'Created by ComputerClub\nPowered by Flutter'),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
