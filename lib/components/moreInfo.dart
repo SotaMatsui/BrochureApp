@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class moreInfoComp extends StatelessWidget {
-  String title;
-  Icon icon;
-  Widget body;
-  moreInfoComp(
-    String this.title,
-    Icon this.icon,
-    Widget this.body,
+class MoreInfoComp extends StatelessWidget {
+  final String title;
+  final Icon icon;
+  final Widget body;
+  MoreInfoComp(
+    this.title,
+    this.icon,
+    this.body,
   );
   @override
   Widget build(BuildContext context) {

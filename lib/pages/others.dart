@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fes_brochure/components/moreInfo.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-
-import 'package:fes_brochure/components/detail.dart';
 
 final imageList = [
   'assets/images/arts/1.png',
@@ -20,14 +15,14 @@ class TabInfo {
   TabInfo(this.label, this.widget);
 }
 
-class othersPage extends StatefulWidget {
+class OthersPage extends StatefulWidget {
   final String jsondata;
-  othersPage({required this.jsondata});
+  OthersPage({required this.jsondata});
   @override
-  _othersPageState createState() => _othersPageState();
+  _OthersPageState createState() => _OthersPageState();
 }
 
-class _othersPageState extends State<othersPage> {
+class _OthersPageState extends State<OthersPage> {
   Map _data1 = {};
   Future<void> loadJsonAsset() async {
     setState(() {
@@ -43,18 +38,6 @@ class _othersPageState extends State<othersPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> buildItems() {
-      List<Widget> items = [];
-      print(_data1['aisatu']);
-
-      _data1['aisatu'].forEach((Map obj) {
-        items.add(Text(obj['body']));
-      });
-
-      return items;
-    }
-
-    List<String> list = ['one', 'two', 'three', 'four'];
     List<Widget> widgets(String type) {
       var array = <Widget>[];
       switch (type) {
@@ -229,7 +212,7 @@ class _othersPageState extends State<othersPage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
-              builder: (context) => moreInfoComp(title, icon, body),
+              builder: (context) => MoreInfoComp(title, icon, body),
             );
           },
           child: Container(

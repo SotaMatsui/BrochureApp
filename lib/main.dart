@@ -57,13 +57,13 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final int _selectedIndex = ref.watch(bnbIndexProvider).state;
     List<Widget> _pageList = [
-      homePage(
+      HomePage(
         jsondata: loadData,
       ),
       ExplorePage(
         jsondata: loadData,
       ),
-      othersPage(
+      OthersPage(
         jsondata: loadData,
       )
     ];
@@ -78,7 +78,7 @@ class MyApp extends ConsumerWidget {
         brightness: Brightness.light,
         accentColor: Colors.black,
         textTheme: TextTheme(
-          body1: TextStyle(
+          bodyText2: TextStyle(
             fontFamily: 'LexendDeca',
             fontWeight: FontWeight.w500,
             fontFamilyFallback: ['NotoSansJP'],
@@ -86,7 +86,7 @@ class MyApp extends ConsumerWidget {
         ),
         appBarTheme: AppBarTheme(
           textTheme: ThemeData.light().textTheme.copyWith(
-                title: TextStyle(
+                headline6: TextStyle(
                     fontFamily: 'LexendDeca',
                     color: Colors.black,
                     fontSize: 18,
@@ -108,15 +108,15 @@ class MyApp extends ConsumerWidget {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
-              title: Text('aa'),
+              label: 'Home',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.store_outlined),
-              title: Text('aa'),
+              label: 'Explore',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.menu_outlined),
-              title: Text('aa'),
+              label: 'More',
             ),
           ],
           type: BottomNavigationBarType.fixed,

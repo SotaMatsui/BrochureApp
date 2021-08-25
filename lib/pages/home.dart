@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fes_brochure/components/moreInfo.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-
-import 'package:fes_brochure/components/detail.dart';
 
 class TabInfo {
   String label;
@@ -13,14 +8,14 @@ class TabInfo {
   TabInfo(this.label, this.widget);
 }
 
-class homePage extends StatefulWidget {
+class HomePage extends StatefulWidget {
   final String jsondata;
-  homePage({required this.jsondata});
+  HomePage({required this.jsondata});
   @override
-  _homePageState createState() => _homePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _homePageState extends State<homePage> {
+class _HomePageState extends State<HomePage> {
   Map _data1 = {};
   Future<void> loadJsonAsset() async {
     setState(() {
@@ -36,18 +31,6 @@ class _homePageState extends State<homePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> buildItems() {
-      List<Widget> items = [];
-      print(_data1['aisatu']);
-
-      _data1['aisatu'].forEach((Map obj) {
-        items.add(Text(obj['body']));
-      });
-
-      return items;
-    }
-
-    List<String> list = ['one', 'two', 'three', 'four'];
     List<Widget> widgets(String type) {
       var array = <Widget>[];
       switch (type) {
@@ -265,7 +248,7 @@ class _homePageState extends State<homePage> {
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(16)),
                     ),
-                    builder: (context) => moreInfoComp(title, icon, body),
+                    builder: (context) => MoreInfoComp(title, icon, body),
                   );
                 },
                 child: Container(

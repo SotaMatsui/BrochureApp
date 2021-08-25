@@ -132,6 +132,7 @@ class _ExplorePageState extends State<ExplorePage>
   void initState() {
     loadJsonAsset();
     super.initState();
+    // ignore: todo
     //TODO このマジでガチでヤバいハードコーディングなんとかする
     _tabController = TabController(length: 2, vsync: this);
     judgeIsWithFilter();
@@ -361,8 +362,8 @@ class _ExplorePageState extends State<ExplorePage>
 }
 
 class SchePage extends StatelessWidget {
-  Map _data;
-  Map _dataTL;
+  final Map _data;
+  final Map _dataTL;
   SchePage(this._data, this._dataTL);
 
   Widget build(BuildContext context) {
@@ -418,8 +419,8 @@ class SchePage extends StatelessWidget {
 }
 
 class ScheItem extends StatelessWidget {
-  Map _data;
-  List _dataTL;
+  final Map _data;
+  final List _dataTL;
   ScheItem(this._data, this._dataTL);
 
   Widget build(BuildContext context) {
@@ -433,6 +434,7 @@ class ScheItem extends StatelessWidget {
               _data[_dataTL[i]['ID']]['organizer'],
               _data[_dataTL[i]['ID']]['place'],
               _data[_dataTL[i]['ID']]['time'],
+              _data[_dataTL[i]['ID']]['timeTable'],
               'https://fesbrochuredata.web.app/img/titleImg/${_dataTL[i]['ID']}.png',
               Color.fromRGBO(
                   int.parse(
@@ -467,6 +469,7 @@ class ScheItem extends StatelessWidget {
       String organizer,
       String place,
       List timeList,
+      List timeTable,
       String icon,
       Color themeColor,
       Color subColor,
@@ -490,7 +493,7 @@ class ScheItem extends StatelessWidget {
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(16)),
                   ),
-                  builder: (context) => DetailPageB(
+                  builder: (context) => DetailPageC(
                       id,
                       title,
                       type,
@@ -501,6 +504,7 @@ class ScheItem extends StatelessWidget {
                       subColor,
                       shortDesc,
                       longDesc,
+                      timeTable,
                       timeList),
                 );
               },
@@ -549,11 +553,11 @@ class ScheItem extends StatelessWidget {
                                     style: TextStyle(fontSize: 14.0),
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
-                                  ),
+                                  ), /* 
                                   Container(
                                     padding: EdgeInsets.only(top: 12),
                                     child: Icon(Icons.favorite_border_outlined),
-                                  ),
+                                  ), */
                                 ],
                               ),
                             ),
@@ -571,7 +575,7 @@ class ScheItem extends StatelessWidget {
 }
 
 class PermPage extends StatelessWidget {
-  List _data;
+  final List _data;
   PermPage(this._data);
 
   Widget build(BuildContext context) {
@@ -704,8 +708,8 @@ class PermPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ),
-                  Icon(Icons.favorite_border_outlined),
+                  ), /* 
+                  Icon(Icons.favorite_border_outlined), */
                 ],
               ),
             ),
