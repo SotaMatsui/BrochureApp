@@ -119,6 +119,7 @@ class _HomePageState extends State<HomePage> {
               builder: (context, scrollController) {
                 return SingleChildScrollView(
                   controller: scrollController,
+                  physics: ClampingScrollPhysics(),
                   child: Container(
                     margin: EdgeInsets.only(top: 10),
                     decoration: BoxDecoration(
