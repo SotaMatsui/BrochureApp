@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:fes_brochure/components/detail.dart';
 
@@ -62,22 +63,7 @@ class _ExplorePageState extends State<ExplorePage>
           }
         });
         _data1.forEach((element) {
-          var searchValue = element['type'];
-          if (searchValue.contains('展示')) {
-            searchValue = '展示発表';
-          } else if (searchValue.contains('2-')) {
-            searchValue = '2年';
-          } else if (searchValue.contains('3-')) {
-            searchValue = '3年';
-          } else if (searchValue.contains('部')) {
-            searchValue = '部活動';
-          } else if (searchValue.contains('委員')) {
-            searchValue = '委員会';
-          } else if (searchValue.contains('科')) {
-            searchValue = '教科';
-          } else {
-            searchValue = 'その他';
-          }
+          var searchValue = element['category'];
           if (_orgs1B.containsKey(searchValue)) {
             _orgs1B[searchValue].add(element['ID']);
           } else {
@@ -86,6 +72,7 @@ class _ExplorePageState extends State<ExplorePage>
             });
           }
         });
+        print(_orgs1B);
       }
 
       if (_data2.length != 0) {
@@ -178,7 +165,7 @@ class _ExplorePageState extends State<ExplorePage>
   }
 
   void renewData() {
-    if (_filPermOrg.length != 0) {
+    if (_filPermOrg.length != 0 && _filPermGenre.length == 0) {
       List hoge = [];
       List huga = [];
       //フィルターのリストからカテゴリの中身をhogeに追加
@@ -190,6 +177,46 @@ class _ExplorePageState extends State<ExplorePage>
 
       _data1.forEach((element) {
         if (hoge.contains(element['ID'])) {
+          huga.add(element);
+        }
+      });
+      _data1Final = huga;
+    } else if (_filPermGenre.length != 0 && _filPermOrg.length == 0) {
+      List hoge = [];
+      List huga = [];
+      //フィルターのリストからカテゴリの中身をhogeに追加
+      _filPermGenre.forEach((element) {
+        hoge.insertAll(0, _orgs1B[element]);
+      });
+      //idをソート
+      hoge.sort((a, b) => int.parse(a) - int.parse(b));
+
+      _data1.forEach((element) {
+        if (hoge.contains(element['ID'])) {
+          huga.add(element);
+        }
+      });
+      _data1Final = huga;
+    } else if (_filPermOrg.length != 0 && _filPermGenre.length != 0) {
+      List hoge = [];
+      List hage = [];
+      List huga = [];
+      //フィルターのリストからカテゴリの中身をhogeに追加
+      _filPermOrg.forEach((element) {
+        hoge.insertAll(0, _orgs1[element]);
+      });
+      _filPermGenre.forEach((element) {
+        hage.insertAll(0, _orgs1B[element]);
+      });
+      //両方のフィルターに合致するものだけを抽出
+      List reFilter = hoge
+          .where((element) =>hage.contains(element))
+          .toList();
+      //idをソート
+      reFilter.sort((a, b) => int.parse(a) - int.parse(b));
+      //idのリストからデータを参照してデータ入りのリストを作成
+      _data1.forEach((element) {
+        if (reFilter.contains(element['ID'])) {
           huga.add(element);
         }
       });
@@ -259,7 +286,7 @@ class _ExplorePageState extends State<ExplorePage>
         floatingActionButton: isWithFilter
             ? FloatingActionButton.extended(
                 icon: Icon(Icons.filter_alt_outlined),
-                label: _filPermOrg.length == 0
+                label: _filPermOrg.length + _filPermGenre.length == 0
                     ? Text('絞り込む')
                     : Row(children: [
                         Text('絞り込む '),
@@ -271,7 +298,8 @@ class _ExplorePageState extends State<ExplorePage>
                             width: 18,
                             child: Container(
                               alignment: Alignment.center,
-                              child: Text(_filPermOrg.length.toString()),
+                              child: Text(
+                                  '${_filPermOrg.length + _filPermGenre.length}'),
                             ),
                           ),
                         ),
@@ -279,6 +307,7 @@ class _ExplorePageState extends State<ExplorePage>
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
+                    isScrollControlled: true,
                     shape: RoundedRectangleBorder(
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(16)),
@@ -315,37 +344,80 @@ class _ExplorePageState extends State<ExplorePage>
                                   ],
                                 ),
                               ),
-                              SizedBox(
-                                height: 120,
-                                child: Wrap(
-                                  children: _orgs1.keys
-                                      .map((e) => Container(
-                                            padding: EdgeInsets.all(4),
-                                            child: FilterChip(
-                                              backgroundColor:
-                                                  Colors.transparent,
-                                              shape: StadiumBorder(
-                                                  side: BorderSide()),
-                                              label: Text(e),
-                                              selectedColor: Colors.black,
-                                              checkmarkColor: Colors.white,
-                                              labelStyle: TextStyle(
-                                                  color: _filPermOrg.contains(e)
-                                                      ? Colors.white
-                                                      : Colors.black),
-                                              selected: _filPermOrg.contains(e),
-                                              onSelected: (bool value) {
-                                                setModalState(() {
-                                                  //Modal側のsetState
-                                                  value
-                                                      ? addFilter('org', e)
-                                                      : removeFilter('org', e);
-                                                });
-                                              },
-                                            ),
-                                          ))
-                                      .toList(),
+                              Wrap(
+                                children: _orgs1.keys
+                                    .map((e) => Container(
+                                          padding: EdgeInsets.all(4),
+                                          child: FilterChip(
+                                            backgroundColor: Colors.transparent,
+                                            shape: StadiumBorder(
+                                                side: BorderSide()),
+                                            label: Text(e),
+                                            selectedColor: Colors.black,
+                                            checkmarkColor: Colors.white,
+                                            labelStyle: TextStyle(
+                                                color: _filPermOrg.contains(e)
+                                                    ? Colors.white
+                                                    : Colors.black),
+                                            selected: _filPermOrg.contains(e),
+                                            onSelected: (bool value) {
+                                              setModalState(() {
+                                                //Modal側のsetState
+                                                value
+                                                    ? addFilter('org', e)
+                                                    : removeFilter('org', e);
+                                              });
+                                            },
+                                          ),
+                                        ))
+                                    .toList(),
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(12.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      'Genre',
+                                      style: TextStyle(fontSize: 21.0),
+                                    ),
+                                    Text(
+                                      ' - ジャンルで絞り込む',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16.0),
+                                    ),
+                                  ],
                                 ),
+                              ),
+                              Wrap(
+                                children: _orgs1B.keys
+                                    .map((e) => Container(
+                                          padding: EdgeInsets.all(4),
+                                          child: FilterChip(
+                                            backgroundColor: Colors.transparent,
+                                            shape: StadiumBorder(
+                                                side: BorderSide()),
+                                            label: Text(e),
+                                            selectedColor: Colors.black,
+                                            checkmarkColor: Colors.white,
+                                            labelStyle: TextStyle(
+                                                color: _filPermGenre.contains(e)
+                                                    ? Colors.white
+                                                    : Colors.black),
+                                            selected: _filPermGenre.contains(e),
+                                            onSelected: (bool value) {
+                                              setModalState(() {
+                                                //Modal側のsetState
+                                                value
+                                                    ? addFilter('genre', e)
+                                                    : removeFilter('genre', e);
+                                              });
+                                            },
+                                          ),
+                                        ))
+                                    .toList(),
                               ),
                             ],
                           ),
@@ -403,6 +475,8 @@ class SchePage extends StatelessWidget {
                                     color: Colors.grey[800], fontSize: 12.0),
                                 overflow: TextOverflow.ellipsis,
                               ),
+                              SizedBox(width: 16),
+                              Expanded(child: Divider(color: Colors.black.withOpacity(0.5),thickness: 1.0,)),
                             ],
                           ),
                         ),
@@ -435,7 +509,7 @@ class ScheItem extends StatelessWidget {
               _data[_dataTL[i]['ID']]['place'],
               _data[_dataTL[i]['ID']]['time'],
               _data[_dataTL[i]['ID']]['timeTable'],
-              'https://fesbrochuredata.web.app/img/titleImg/${_dataTL[i]['ID']}.png',
+              'assets/images/covers/${_dataTL[i]['ID']}.jpg',
               Color.fromRGBO(
                   int.parse(
                       _data[_dataTL[i]['ID']]['primaryColor'].split(',')[0]),
@@ -520,8 +594,8 @@ class ScheItem extends StatelessWidget {
                           width: 156,
                           child: Material(
                             color: Colors.grey[200],
-                            child: Image.network(
-                              icon,
+                            child: Image(
+                              image:AssetImage(icon),
                               fit: BoxFit.cover,
                             ),
                           )),
@@ -597,7 +671,7 @@ class PermPage extends StatelessWidget {
                     _data[index]['genre'],
                     _data[index]['organizer'],
                     _data[index]['place'],
-                    'https://fesbrochuredata.web.app/img/titleImg/${_data[index]['ID']}.png',
+                    'assets/images/covers/${_data[index]['ID']}.jpg',
                     Color.fromRGBO(
                         int.parse(_data[index]['primaryColor'].split(',')[0]),
                         int.parse(_data[index]['primaryColor'].split(',')[1]),
@@ -673,7 +747,7 @@ class PermPage extends StatelessWidget {
                         aspectRatio: 1 / 1,
                         child: Material(
                           color: Colors.grey[200],
-                          child: Image.network(
+                          child: Image.asset(
                             icon,
                             fit: BoxFit.cover,
                           ),

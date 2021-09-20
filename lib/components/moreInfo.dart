@@ -17,11 +17,11 @@ class MoreInfoComp extends StatelessWidget {
         minChildSize: 0.5,
         maxChildSize: 1,
         builder: (context, scrollController) {
-          return SingleChildScrollView(
-            controller: scrollController,
-            child: Material(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-              color: Colors.white,
+          return Material(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            color: Colors.white,
+            child: SingleChildScrollView(
+              controller: scrollController,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[

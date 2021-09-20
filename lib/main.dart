@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'pages/home.dart';
 import 'pages/explore.dart';
 import 'pages/others.dart';
+import 'pages/deco.dart';
 
 final bnbIndexProvider = StateProvider<int>((ref) {
   return 0;
@@ -19,6 +20,11 @@ void main() async {
     statusBarColor: Colors.transparent, // status bar color
     systemNavigationBarIconBrightness: Brightness.dark,
   ));
+  WidgetsFlutterBinding.ensureInitialized();
+  // 画面の向きを固定.
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]); 
   runApp(
     ProviderScope(
       child: MyApp(),
@@ -38,6 +44,26 @@ Future<void> fetchJson() async {
 final homeDataProvider = StateProvider<Map>((ref) {
   return json.decode(loadData)['home'];
 });
+
+class Error0 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Text(
+            'Error0:\nインターネットに接続されていないか、サーバーが無効です。',
+            style: TextStyle(
+                color: Colors.grey[400],
+                fontSize: 24,
+                fontWeight: FontWeight.w700),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class MyApp extends ConsumerWidget {
   static Map<int, Color> color = {
@@ -62,6 +88,9 @@ class MyApp extends ConsumerWidget {
         jsondata: loadData,
       ),
       ExplorePage(
+        jsondata: loadData,
+      ),
+      DecoPage(
         jsondata: loadData,
       ),
       OthersPage(
@@ -96,35 +125,51 @@ class MyApp extends ConsumerWidget {
               ),
         ),
       ),
-      home: Scaffold(
-        body: _pageList[_selectedIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          selectedItemColor: Colors.blue[700],
-          backgroundColor: Colors.white,
-          selectedFontSize: 0,
-          unselectedFontSize: 0,
-          elevation: 0,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.store_outlined),
-              label: 'Explore',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.menu_outlined),
-              label: 'More',
-            ),
-          ],
-          type: BottomNavigationBarType.fixed,
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-        ),
-      ),
+      home: loadData != ''
+          ? Scaffold(
+              body: _pageList[_selectedIndex],
+              bottomNavigationBar: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black,
+                    ),
+                  ],
+                ),
+                child: BottomNavigationBar(
+                  showSelectedLabels: false,
+                  showUnselectedLabels: false,
+                  selectedItemColor: Colors.blue[700],
+                  backgroundColor: Colors.white,
+                  selectedFontSize: 0,
+                  unselectedFontSize: 0,
+                  elevation: 0,
+                  items: const <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.home_outlined),
+                      label: 'Home',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.store_outlined),
+                      label: 'Explore',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.travel_explore_outlined),
+                      label: 'Decolations',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.menu_outlined),
+                      label: 'More',
+                    ),
+                  ],
+                  type: BottomNavigationBarType.fixed,
+                  currentIndex: _selectedIndex,
+                  onTap: _onItemTapped,
+                ),
+              ),
+            )
+          : Error0(),
     );
   }
 }

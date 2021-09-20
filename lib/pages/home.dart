@@ -39,11 +39,16 @@ class _HomePageState extends State<HomePage> {
             array.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                    '${_data1['aisatu'][i]['role']}\n${_data1['aisatu'][i]['name']}',
+                Text('${_data1['aisatu'][i]['role']}',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w500, fontSize: 12)),
+                Text('${_data1['aisatu'][i]['name']}',
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                Text('${_data1['aisatu'][i]['body']}\n'),
+                SizedBox(
+                  height: 12,
+                ),
+                Text('${_data1['aisatu'][i]['body']}\n\n'),
               ],
             ));
           }
@@ -63,130 +68,107 @@ class _HomePageState extends State<HomePage> {
           break;
         case 'onegai':
           for (var i = 0; i < _data1['onegai'].length; i++) {
-            array.add(Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('• ${_data1['onegai'][i]}\n'),
-              ],
-            ));
+            array.add(Text('• ${_data1['onegai'][i]}\n'));
           }
           break;
       }
       return array;
     }
 
+    List vctOmoroi = [
+      Container(
+        padding: EdgeInsets.all(10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Material(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(10),
+              child: SizedBox(
+                width: 24,
+                height: 4,
+              ),
+            ),
+          ],
+        ),
+      ),
+      _menuItemB(
+        "ごあいさつ",
+        Icon(Icons.pets_outlined),
+        Column(children: widgets('aisatu')),
+        context,
+      ),
+      _menuItem(
+        "おねがい",
+        Icon(Icons.feedback_outlined),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: widgets('onegai'),
+        ),
+      ),
+    ];
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
         children: <Widget>[
-          Material(
-            color: Colors.amber,
+          Container(
+            constraints: BoxConstraints.expand(),
             child: Image.asset(
               'assets/splash/bg.png',
+              fit: BoxFit.fill,
+            ),
+          ),
+          Container(
+            constraints: BoxConstraints.expand(),
+            child: Image.asset(
+              'assets/splash/fg.png',
               fit: BoxFit.fitWidth,
             ),
           ),
-          Column(
-            children: [
-              AppBar(
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Image.asset(
-                      'assets/images/logo_woIcon_dark.png',
-                      height: 50,
-                    ),
-                  ],
+          AppBar(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Image.asset(
+                  'assets/images/logo_woIcon_dark.png',
+                  height: 50,
                 ),
-                backgroundColor: Colors.white.withOpacity(0),
-                elevation: 0,
-              ),
-              Container(
-                child: Image.asset(
-                  'assets/splash/fg.png',
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ],
-          ),
-          SizedBox.expand(
-            child: DraggableScrollableSheet(
-              expand: true,
-              initialChildSize: 0.15,
-              minChildSize: 0.15,
-              maxChildSize: 1,
-              builder: (context, scrollController) {
-                return SingleChildScrollView(
-                  controller: scrollController,
-                  physics: ClampingScrollPhysics(),
-                  child: Container(
-                    margin: EdgeInsets.only(top: 10),
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 5,
-                          blurRadius: 7,
-                          offset: Offset(0, 0),
-                        ),
-                      ],
-                    ),
-                    child: Material(
-                      elevation: 10,
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(16)),
-                      color: Colors.white,
-                      child: _data1.length != 0
-                          ? Column(
-                              children: <Widget>[
-                                Container(
-                                  margin: EdgeInsets.all(10),
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          child: Material(
-                                            color: Colors.grey[300],
-                                            child: SizedBox(
-                                              width: 24,
-                                              height: 4,
-                                            ),
-                                          ),
-                                        )
-                                      ]),
-                                ),
-                                _menuItemB(
-                                  "ごあいさつ",
-                                  Icon(Icons.pets_outlined),
-                                  Column(children: widgets('aisatu')),
-                                  context,
-                                ),
-                                _menuItem(
-                                  "各装飾の見どころ",
-                                  Icon(Icons.thumb_up_outlined),
-                                  Column(
-                                    children: widgets('midokoro'),
-                                  ),
-                                ),
-                                _menuItem(
-                                  "おねがい",
-                                  Icon(Icons.feedback_outlined),
-                                  Column(
-                                    children: widgets('onegai'),
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Text('loading'),
-                    ),
-                  ),
-                );
-              },
+              ],
             ),
+            backgroundColor: Colors.white.withOpacity(0),
+            elevation: 0,
+          ),
+          DraggableScrollableSheet(
+            initialChildSize: 0.15,
+            minChildSize: 0.15,
+            maxChildSize: 0.8,
+            builder: (context, scrollController) {
+              return Container(
+                child: MediaQuery.removePadding(
+                  removeTop: true,
+                  context: context,
+                  child: ListView.builder(
+                    controller: scrollController,
+                    itemCount: vctOmoroi.length,
+                    itemBuilder: (context, index) {
+                      return vctOmoroi[index];
+                    },
+                  ),
+                ),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(15)),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.4),
+                          offset: Offset(0, 0),
+                          blurRadius: 12)
+                    ]),
+              );
+            },
           ),
         ],
       ),
